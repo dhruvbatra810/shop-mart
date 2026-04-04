@@ -1,9 +1,12 @@
 "use client"
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Cartcontext } from "@/lib/contexts/cartContext";
 
 export default function NavBar() {
+    const { cartCount } = useContext(Cartcontext);
+    console.log('inside cart', cartCount)
     const searchParam = useSearchParams();
     const [query, setQuery] = useState(searchParam.get("query") || "");
     const router = useRouter();
@@ -27,10 +30,15 @@ export default function NavBar() {
 
                         {/* Mobile Links (visible before wrap) */}
                         <div className="flex items-center gap-4 sm:hidden">
-                            <Link href="/cart" className="text-zinc-600 hover:text-zinc-900">
+                            <Link href="/cart" className="text-zinc-600 hover:text-zinc-900 relative">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                 </svg>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-2 border-white box-content">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </Link>
                             <Link href="/login" className="bg-zinc-100 hover:bg-zinc-200 text-zinc-900 px-4 py-1.5 rounded-full font-medium text-sm transition-all">
                                 Login
@@ -63,9 +71,16 @@ export default function NavBar() {
                     {/* Desktop Navigation Links */}
                     <div className="hidden sm:flex items-center gap-6">
                         <Link href="/cart" className="text-zinc-600 hover:text-zinc-900 font-medium text-sm transition-colors flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                            </svg>
+                            <div className="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                                </svg>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-2 bg-rose-500 text-white text-[10px] font-bold min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center border-2 border-white box-content">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </div>
                             <span className="hidden lg:block">Cart</span>
                         </Link>
 

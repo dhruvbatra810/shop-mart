@@ -1,5 +1,6 @@
 // db/schema.ts
-import { pgTable, text, integer, decimal, timestamp, boolean } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import { pgTable, text, integer, decimal, timestamp, boolean, uniqueIndex, check } from 'drizzle-orm/pg-core'
 
 export const products = pgTable('products', {
   id: text('id').primaryKey(),
@@ -30,3 +31,24 @@ export const orders = pgTable('orders', {
   status: text('status').notNull().default('placed'),  // placed, shipped, delivered
   createdAt: timestamp('created_at').defaultNow(),
 })
+
+export const carts = pgTable('carts', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => users.id),
+  sessionId: text('session_id'),
+  productId: text('product_id').notNull().references(() => products.id),
+  quantity: integer('quantity').notNull().default(1),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+}, (table) => ({
+  userProductUniq: uniqueIndex('user_product_uniq')
+    .on(table.userId, table.productId),
+
+  sessionProductUniq: uniqueIndex('session_product_uniq')
+    .on(table.sessionId, table.productId),
+
+  checkIdentity: check(
+    'cart_must_have_identity',
+    sql`user_id IS NOT NULL OR session_id IS NOT NULL`
+  ),
+}))

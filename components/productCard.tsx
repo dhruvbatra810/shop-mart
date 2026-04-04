@@ -1,7 +1,10 @@
+
+import { addToCart } from "@/lib/server-action";
 import Image from "next/image";
 import Link from "next/link";
+import AddCartButton from "./addCartButton";
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
   description: string;
@@ -10,7 +13,7 @@ type Product = {
   stock: number;
 };
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, cartMap }: { product: Product, cartMap: Map<string, number> }) {
   return (
     <div className="group flex flex-col bg-white border border-zinc-200 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative aspect-square w-full bg-zinc-100 overflow-hidden">
@@ -45,16 +48,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <p className="text-sm text-zinc-500 line-clamp-2 mb-4 flex-1">
           {product.description}
         </p>
-
-        <button
-          disabled={product.stock === 0}
-          className="mt-auto w-full bg-zinc-900 hover:bg-zinc-800 text-white disabled:bg-zinc-300 disabled:text-zinc-500 disabled:cursor-not-allowed border-none rounded-xl px-4 py-3 font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-          </svg>
-          Add to Cart
-        </button>
+        <AddCartButton product={product} quantity={cartMap.get(product.id) || 0} />
       </div>
     </div>
   );

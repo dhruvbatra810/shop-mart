@@ -4,9 +4,8 @@ import { useContext, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Cartcontext } from "@/lib/contexts/cartContext";
 
-export default function NavBar() {
+export default function NavBar({ session }: { session: any }) {
     const { cartCount } = useContext(Cartcontext);
-    console.log('inside cart', cartCount)
     const searchParam = useSearchParams();
     const [query, setQuery] = useState(searchParam.get("query") || "");
     const router = useRouter();
@@ -14,7 +13,6 @@ export default function NavBar() {
         e.preventDefault();
         router.push(`/products?query=${query}`)
     };
-
     return (
         <nav className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-xl border-b border-zinc-200 shadow-sm transition-all pb-3 pt-3 sm:py-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,9 +89,9 @@ export default function NavBar() {
                             <span className="hidden lg:block">Profile</span>
                         </Link>
 
-                        <Link href="/login" className="bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-900 px-5 py-2 rounded-full font-medium text-sm transition-all active:scale-[0.98] flex items-center justify-center">
+                        {!session && <Link href="/login" className="bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-900 px-5 py-2 rounded-full font-medium text-sm transition-all active:scale-[0.98] flex items-center justify-center">
                             Login
-                        </Link>
+                        </Link>}
                     </div>
 
                 </div>

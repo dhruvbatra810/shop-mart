@@ -16,16 +16,40 @@ export async function getCartBySessionId(productId: string | undefined) {
     return []
 }
 
+export async function getCartByUserId(productId: string | undefined) {
+    const cookieStore = await cookies();
+    const userID = cookieStore.get('user_id')?.value;
+    if (productId && userID) {
+        const items = await db.select().from(carts).where(and(eq(carts.productId, productId), eq(carts.userId, userID)))
+        return items;
+    } else if (userID) {
+        const items = await db.select().from(carts).where(eq(carts.userId, userID))
+        return items;
+    }
+    return []
+}
+
 export async function getPopulatedCart() {
     const cookieStore = await cookies();
+    const userID = cookieStore.get('user_id')?.value || '';
+    if (userID) {
+        const items = await db.select({
+            cart: carts,
+            product: products,
+        })
+            .from(carts)
+            .innerJoin(products, eq(carts.productId, products.id))
+            .where(eq(carts.userId, userID));
+        return items;
+    }
     const sessionID = cookieStore.get('session_id')?.value;
     if (!sessionID) return [];
-    
+
     return await db.select({
         cart: carts,
         product: products,
     })
-    .from(carts)
-    .innerJoin(products, eq(carts.productId, products.id))
-    .where(eq(carts.sessionId, sessionID));
+        .from(carts)
+        .innerJoin(products, eq(carts.productId, products.id))
+        .where(eq(carts.sessionId, sessionID));
 }

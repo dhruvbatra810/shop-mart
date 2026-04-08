@@ -1,3 +1,4 @@
+import LoginButton from "@/components/loginButton";
 import { cookies } from "next/headers";
 
 export default function Login() {
@@ -54,6 +55,7 @@ export default function Login() {
                         </svg>
                     </button>
                 </form>
+                <LoginButton />
             </div>
         </div>
     )

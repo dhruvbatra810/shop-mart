@@ -3,40 +3,37 @@ import { carts, products } from "@/db/schema";
 import ProductList from "./productList";
 import { or, ilike } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { getCartBySessionId } from "@/lib/cart";
+import { getCartBySessionId, getCartByUserId } from "@/lib/cart";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
+export const revalidate = 5;
 
 export default async function ProductsPage({ searchParams }: { searchParams?: Promise<{ query?: string }> }) {
     let prod = []
     const cookieStore = await cookies();
     const param = await searchParams;
     if (!param?.query) {
-        // ✅ fetch all
         prod = await db.select().from(products);
     } else {
-        // ✅ filtered search
-        prod = await db
-            .select()
-            .from(products)
-            .where(
-                or(
-                    ilike(products.name, `%${param?.query}%`),
-                    ilike(products.description, `%${param?.query}%`)
-                )
-            );
+        const res = await fetch(`${process.env.SHOP_MART_BASE_API}/api/search`, {
+            method: 'POST',
+            body: JSON.stringify({ query: param?.query })
+        })
+        const data = await res.json();
+        prod = data.products;
     }
     const cartMap = new Map();
-    if (false) {
-
+    if (cookieStore.get('user_id')?.value) {
+        const tempcart = await getCartByUserId(undefined);
+        tempcart.forEach((item) => {
+            cartMap.set(item.productId, item.quantity)
+        })
     } else {
         const tempcart = await getCartBySessionId(undefined);
         tempcart.forEach((item) => {
             cartMap.set(item.productId, item.quantity)
         })
     }
-    console.log(cartMap)
-    // console.log(prod, searchParams)
     return <div className="flex flex-col flex-1 bg-white h-full">
         {prod.length > 0 && <ProductList products={prod} cartMap={cartMap} />}
         {prod.length === 0 && <div className=" col-span-full text-center py-12">

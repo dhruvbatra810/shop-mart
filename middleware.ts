@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+// middleware.ts
+import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(req: NextRequest) {
+    const session = await auth()
     const response = NextResponse.next()
 
-    if (!request.cookies.get('session_id')) {
+    if (!req.cookies.get('session_id') && !req.cookies.get('user_id')) {
         response.cookies.set('session_id', crypto.randomUUID(), {
             httpOnly: true,
             sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 30, // 30 days
+            maxAge: 60 * 60 * 24 * 30,
             path: '/',
         })
     }

@@ -1,9 +1,10 @@
 import AddCartButton from "@/components/addCartButton";
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { getCartBySessionId } from "@/lib/cart";
+import { getCartBySessionId, getCartByUserId } from "@/lib/cart";
 import { addToCart } from "@/lib/server-action";
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -12,6 +13,7 @@ export const revalidate = 5;
 export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
+    const cookieStore = await cookies();
     // Fetch product from neon db
     const productArr = await db.select().from(products).where(eq(products.id, id));
 
@@ -20,19 +22,24 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     }
 
     const product = productArr[0];
-    let quantity = 0
-    if (false) {
-
+    console.log(product, 'productarr')
+    let cartquantity = 0
+    if (cookieStore.get('user_id')?.value) {
+        const tempcart = await getCartByUserId(product.id);
+        if (tempcart.length > 0) {
+            cartquantity = tempcart[0].quantity
+        }
     } else {
         const tempcart = await getCartBySessionId(product.id);
-        quantity = tempcart[0].quantity
+        if (tempcart.length > 0) {
+            cartquantity = tempcart[0].quantity
+        }
     }
 
     return (
         <div className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-white h-full flex-1">
             <div className="flex flex-col md:flex-row gap-10 md:gap-16">
 
-                {/* Left side: Image */}
                 <div className="w-full md:w-1/2">
                     <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                         <Image
@@ -46,7 +53,6 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
                     </div>
                 </div>
 
-                {/* Right side: Details */}
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
                     <span className="text-zinc-500 font-medium tracking-wide uppercase text-sm mb-2">
                         {product.category}
@@ -87,7 +93,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
                     </div>
 
                     <div className="mt-10 border-t border-zinc-200 pt-8 flex gap-4">
-                        <AddCartButton product={product} quantity={quantity} />
+                        <AddCartButton product={product} quantity={cartquantity} />
                     </div>
                 </div>
             </div>

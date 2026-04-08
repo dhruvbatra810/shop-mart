@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { auth } from '@/lib/auth';
 
 export const revalidate = 60 * 60 * 24;
 
-export default function LandingPage() {
+export default async function LandingPage() {
     return (
         <main className="flex-1 flex flex-col">
             {/* Hero Section */}
@@ -21,10 +22,10 @@ export default function LandingPage() {
                         Discover our new collection of lightweight, breathable fabrics designed to keep you cool when the temperatures rise.
                     </p>
                     <div className="flex gap-4 flex-col sm:flex-row">
-                        <Link href="/shop/summer" className="px-8 py-4 bg-white text-black font-medium rounded-full hover:bg-zinc-200 transition-colors">
+                        <Link href="/products?query=summer" className="px-8 py-4 bg-white text-black font-medium rounded-full hover:bg-zinc-200 transition-colors">
                             Shop Summer
                         </Link>
-                        <Link href="/shop" className="px-8 py-4 bg-transparent border border-white text-white font-medium rounded-full hover:bg-white/10 transition-colors">
+                        <Link href="/products" className="px-8 py-4 bg-transparent border border-white text-white font-medium rounded-full hover:bg-white/10 transition-colors">
                             View All Items
                         </Link>
                     </div>

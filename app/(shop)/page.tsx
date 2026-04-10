@@ -44,7 +44,7 @@ export default async function LandingPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Shirts Collection */}
-                        <Link href="/shop/shirts" className="group relative h-[500px] rounded-3xl overflow-hidden bg-zinc-100 flex items-end p-8 sm:p-10">
+                        <Link href="products?query=premium%20shirts" className="group relative h-[500px] rounded-3xl overflow-hidden bg-zinc-100 flex items-end p-8 sm:p-10">
                             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=1976&auto=format&fit=crop')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                             <div className="relative z-10 w-full flex justify-between items-end">
@@ -61,7 +61,7 @@ export default async function LandingPage() {
                         </Link>
 
                         {/* Shorts Collection */}
-                        <Link href="/shop/shorts" className="group relative h-[500px] rounded-3xl overflow-hidden bg-zinc-100 flex items-end p-8 sm:p-10">
+                        <Link href="/products?query=summer" className="group relative h-[500px] rounded-3xl overflow-hidden bg-zinc-100 flex items-end p-8 sm:p-10">
                             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                             <div className="relative z-10 w-full flex justify-between items-end">

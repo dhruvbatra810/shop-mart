@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 
 export default async function proxy(req: NextRequest) {
-    const session = await auth()
     const response = NextResponse.next()
 
     if (!req.cookies.get('session_id') && !req.cookies.get('user_id')) {

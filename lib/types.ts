@@ -10,3 +10,6 @@ export interface SearchFilters {
   stock?: number
   inStock?: boolean
 }
+
+
+export type Theme = 'dark' | 'light'

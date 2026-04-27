@@ -14,10 +14,10 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
     const handleQuantityChange = (productId: string, delta: number, currentQuantity: number) => {
         const newQuantity = currentQuantity + delta;
         if (newQuantity < 1) return;
-        
+
         // Optimistic update
-        setItems(prev => prev.map(item => 
-            item.cart.productId === productId 
+        setItems(prev => prev.map(item =>
+            item.cart.productId === productId
                 ? { ...item, cart: { ...item.cart, quantity: newQuantity } }
                 : item
         ))
@@ -32,7 +32,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
     const handleRemove = (productId: string, quantityToRemove: number) => {
         setItems(prev => prev.filter(item => item.cart.productId !== productId))
         setCartCount((prev: number) => prev - quantityToRemove)
-        
+
         startTransition(() => {
             removeFromCart(productId)
         })
@@ -79,7 +79,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                         </div>
                         <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-4 sm:gap-3">
                             <div className="flex items-center bg-zinc-100 rounded-xl p-1 gap-1">
-                                <button 
+                                <button
                                     onClick={() => handleQuantityChange(item.cart.productId, -1, item.cart.quantity)}
                                     className="bg-white rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50 active:scale-[0.98]"
                                     disabled={item.cart.quantity <= 1}
@@ -88,7 +88,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
                                 </button>
                                 <span className="font-semibold px-4 w-12 text-center text-zinc-900">{item.cart.quantity}</span>
-                                <button 
+                                <button
                                     onClick={() => handleQuantityChange(item.cart.productId, 1, item.cart.quantity)}
                                     className="bg-white rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50 active:scale-[0.98]"
                                     disabled={item.cart.quantity >= item.product.stock}
@@ -108,7 +108,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
             <div className="lg:w-1/3">
                 <div className="bg-zinc-50 p-6 sm:p-8 rounded-3xl border border-zinc-200 sticky top-24">
                     <h2 className="text-xl font-bold text-zinc-900 mb-6">Order Summary</h2>
-                    
+
                     <div className="flex flex-col gap-4 mb-6">
                         <div className="flex justify-between items-center text-zinc-600">
                             <span>Subtotal</span>
@@ -133,7 +133,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                     <div className="mb-8">
                         <label className="text-sm font-medium text-zinc-700 block mb-2 px-1">Coupon Code</label>
                         <div className="flex gap-2">
-                            <input 
+                            <input
                                 type="text"
                                 value={coupon}
                                 onChange={e => setCoupon(e.target.value.toUpperCase())}
@@ -149,7 +149,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                         </svg>
                     </button>
-                    
+
                     <p className="text-xs text-zinc-500 font-medium text-center flex items-center justify-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                         Secure Checkout & Payments

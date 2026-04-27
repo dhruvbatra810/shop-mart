@@ -544,3 +544,304 @@ npm run build        # Production build
 npx drizzle-kit push # Push schema to Neon
 npx tsx scripts/seed.ts  # Seed 50 products
 ``` -->
+
+---
+
+# Extended Development Roadmap
+
+> Current state: product listing, AI search, cart, Google auth — all working.
+> Goal: grow from here into a production-grade, interview-ready full-stack app.
+
+---
+
+## Phase 1 — Frontend Polish (Beginner → Comfortable)
+
+### What to build
+- Skeleton loading screens replacing plain spinners
+- Product image zoom on hover, smooth page transitions
+- Fully responsive mobile layout (drawer nav, bottom cart bar)
+- Toast notifications for cart actions (added, removed, error)
+- Dark mode toggle persisted to `localStorage`
+
+### Concepts you will learn
+- `framer-motion` basics: `motion.div`, `AnimatePresence`, layout animations
+- Tailwind `group-hover`, `peer`, and `data-*` attribute patterns
+- CSS `view-transitions` API (Next.js 14 has experimental support)
+- `next/font` for zero-layout-shift typography
+
+### Tools
+- `framer-motion` — animations and micro-interactions
+- `sonner` or `react-hot-toast` — toast system
+- `next-themes` — dark mode
+
+### Task
+Build a `ProductCard` that animates in on scroll, shows a quick-add button on hover, and fires a toast when added to cart. Time-box to 2 days.
+
+---
+
+## Phase 2 — State Management & Performance (Intermediate)
+
+### What to build
+- Replace cookie cart with `Zustand` store (synced to `localStorage` for guests, DB for logged-in users)
+- Optimistic UI on cart mutations (update count instantly, roll back on error)
+- Infinite scroll on product listing using `react-query` / `TanStack Query`
+- `next/image` with blur placeholder on every image
+- Route-level `loading.tsx` and `Suspense` boundaries everywhere
+
+### Concepts you will learn
+- Client-side cache invalidation vs. server revalidation (`revalidatePath`, `revalidateTag`)
+- Optimistic updates pattern: update UI → mutate server → reconcile
+- Stale-while-revalidate caching model
+- `React.lazy` + `dynamic(() => import(...))` for code splitting heavy components
+- Web Vitals: LCP, CLS, INP — how to measure with Lighthouse
+
+### Tools
+- `zustand` — lightweight global state
+- `@tanstack/react-query` — server state, caching, pagination
+- `next/dynamic` — lazy loading
+
+### Task
+Migrate cart to Zustand. Add optimistic +/- buttons on cart page. Measure before/after LCP with `next build && next start`.
+
+---
+
+## Phase 3 — Payment Integration (Intermediate)
+
+### What to build
+- Stripe Checkout integration (hosted checkout page — easiest, production-safe)
+- Webhook handler to update order status on payment success
+- Order confirmation email (via Resend or Nodemailer)
+- Persist real order records in DB after payment confirmed
+
+### Concepts you will learn
+- Stripe payment flow: `PaymentIntent` → Checkout Session → webhook
+- Webhook signature verification (security critical — never skip)
+- Idempotency keys to prevent duplicate orders
+- Server-sent events / polling for payment status
+
+### Tools
+- `stripe` (npm) — Stripe Node SDK
+- `resend` — transactional email
+- Stripe Dashboard for test card numbers
+
+### Task
+Implement the full flow: add to cart → click "Pay" → Stripe Checkout → webhook fires → order marked `paid` in DB → confirmation email sent. Test with card `4242 4242 4242 4242`.
+
+---
+
+## Phase 4 — AI-First Features (Intermediate → Advanced)
+
+### What to build
+- **Chat-based shopping assistant** — floating chat widget, Claude answers product questions and recommends items from your DB
+- **Personalized recommendations** — "You might also like" section using browse history stored in `localStorage` + Claude ranking
+- **Smart search suggestions** — debounced autocomplete using Claude to predict intent as you type
+
+### Concepts you will learn
+- Streaming AI responses with `ReadableStream` and Next.js `StreamingResponse`
+- Tool use / function calling — give Claude access to a `searchProducts` function so it can query your DB mid-conversation
+- `useOptimistic` hook for streaming chat UI
+- Rate limiting AI routes to prevent abuse
+
+### Tools
+- `@anthropic-ai/sdk` (streaming) — already installed
+- `ai` (Vercel AI SDK) — simplifies streaming chat in Next.js
+- `upstash/ratelimit` — Redis-based rate limiting (free tier)
+
+### Task
+Build a chat widget that floats bottom-right. User asks "show me red dresses under ₹1500" — Claude calls your `searchProducts` tool and streams results directly into the chat.
+
+---
+
+## Phase 5 — PWA (Intermediate)
+
+### What to build
+- Web app manifest (`manifest.json`) — app name, icons, theme color
+- Service worker caching product images and static assets for offline use
+- "Add to Home Screen" install prompt
+- Offline fallback page shown when network is unavailable
+
+### Concepts you will learn
+- Cache-first vs. network-first vs. stale-while-revalidate strategies in service workers
+- `next-pwa` plugin (wraps Workbox — Google's service worker library)
+- App shell pattern: cache the shell, stream the content
+
+### Tools
+- `next-pwa` — zero-config PWA for Next.js
+- Chrome DevTools Application tab for debugging service workers
+
+### Task
+Install `next-pwa`, configure it, and verify your app installs on an Android device. Check that product images load offline after first visit.
+
+---
+
+## Phase 6 — Go Backend (Secondary, Gradual)
+
+> Build this in parallel with frontend phases. Start small.
+
+### Step 1 — Go basics + REST API
+**What:** A standalone Go service with `GET /products`, `POST /orders`, `GET /orders/:userId`
+
+**Concepts:** Go modules, `net/http`, JSON encoding, struct tags, error handling idioms
+
+**Tools:** `chi` router (lightweight, idiomatic), `sqlx` (SQL + structs), `pgx` (Postgres driver)
+
+**Task:** Re-implement your products API in Go. Point your Next.js app at `localhost:8080` instead of Drizzle. See both work identically.
+
+---
+
+### Step 2 — Auth in Go (JWT)
+**What:** `POST /auth/login` issues a JWT. Protected routes verify it via middleware.
+
+**Concepts:** JWT structure (header.payload.signature), `RS256` vs `HS256`, refresh token rotation, middleware chaining in Go
+
+**Tools:** `golang-jwt/jwt`, `bcrypt` for password hashing
+
+**Task:** Add email/password auth to Go backend. Implement a `RequireAuth` middleware that extracts and validates the JWT from the `Authorization` header.
+
+---
+
+### Step 3 — Database design
+**What:** Proper relational schema — `users`, `products`, `orders`, `order_items`, `reviews`
+
+**Concepts:** Foreign keys, indexes, `EXPLAIN ANALYZE` for query planning, DB migrations with `goose` or `migrate`
+
+**Tools:** `goose` for migrations, `sqlc` (generates type-safe Go from SQL queries — highly recommended)
+
+**Task:** Write raw SQL migrations. Use `sqlc` to generate Go query functions. No ORM — builds real SQL understanding.
+
+---
+
+### Step 4 — Caching with Redis
+**What:** Cache `GET /products` responses for 60 seconds in Redis
+
+**Concepts:** Cache-aside pattern, TTL, cache invalidation on write, Redis data types (string, hash, sorted set)
+
+**Tools:** `go-redis/redis`, Upstash Redis (free serverless Redis)
+
+**Task:** Add Redis caching to the products endpoint. Log cache hits vs. misses. Measure response time improvement with `hyperfine` or `ab`.
+
+---
+
+### Step 5 — File storage
+**What:** Upload product images to Cloudflare R2 or AWS S3. Store only the URL in DB.
+
+**Concepts:** Presigned URLs (client uploads directly to S3, never through your server), CDN distribution, image resizing with Lambda/Workers
+
+**Tools:** `aws-sdk-go-v2`, Cloudflare R2 (S3-compatible, free egress)
+
+**Task:** Build `POST /upload` that returns a presigned URL. Wire the admin product form to upload images before saving.
+
+---
+
+### Step 6 — Background jobs
+**What:** Send order confirmation email asynchronously after order is placed
+
+**Concepts:** Message queues (producer/consumer), at-least-once delivery, dead letter queues, job retries with backoff
+
+**Tools:** `asynq` (Go job queue backed by Redis), or `pgqueue` if you want pure Postgres
+
+**Task:** Replace synchronous email sending with an `asynq` job. Verify email still arrives even if the job fails once and retries.
+
+---
+
+## Phase 7 — DevOps & Deployment
+
+### Dockerize
+```dockerfile
+# Multi-stage build keeps image small
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN npm ci && npm run build
+
+FROM node:20-alpine AS runner
+COPY --from=builder /app/.next/standalone ./
+CMD ["node", "server.js"]
+```
+
+**Concepts:** Multi-stage builds, `.dockerignore`, environment variable injection at runtime, `docker-compose` for local dev (app + postgres + redis together)
+
+**Task:** `docker compose up` should start your entire stack locally with one command.
+
+---
+
+### CI/CD with GitHub Actions
+```yaml
+# .github/workflows/ci.yml
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build && npm run lint
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+```
+
+**Concepts:** Workflows, jobs, secrets, environment protection rules, artifact caching for faster builds
+
+---
+
+### Logging & Monitoring
+- **Frontend:** Vercel Analytics (free) + Sentry for error tracking
+- **Backend Go:** Structured JSON logging with `slog` (stdlib in Go 1.21+), ship to Axiom or Grafana Loki
+- **Uptime:** Better Uptime or UptimeRobot (free)
+
+---
+
+### Scalability basics
+- **Rate limiting:** `upstash/ratelimit` on AI routes and auth endpoints
+- **DB connection pooling:** PgBouncer or Neon's built-in pooler
+- **Static assets:** Already on Vercel's CDN. For Go backend, put behind Cloudflare for free DDoS protection and caching.
+
+---
+
+## Unique Standout Features
+
+### 1. AI Stylist / Outfit Builder
+User uploads a photo (or picks a vibe: "office casual", "beach wedding") and Claude suggests complete outfits from your product catalog using vision + tool use. Each item is clickable and adds to cart. This is rare in portfolio projects and directly demos multimodal AI + tool use.
+
+### 2. Smart Cart with Price Drop Alerts
+When a logged-in user adds an item to their wishlist instead of cart, a background job (asynq) checks the price daily. On drop, an email is sent instantly. Teaches background jobs, cron scheduling, and transactional email — all real production patterns.
+
+### 3. Social Proof Live Feed
+A small websocket connection (`/ws/activity`) streams anonymized real-time events: "Someone in Mumbai just bought Air Max 90". Fake-able with seeded events for demo. Teaches WebSockets in Go (`gorilla/websocket`), pub/sub with Redis channels, and SSE as a simpler alternative.
+
+---
+
+## Learning Path Summary
+
+| Phase | Focus | Timeline |
+|-------|-------|----------|
+| 1 — UI Polish | framer-motion, dark mode, skeletons | 1 week |
+| 2 — State + Perf | Zustand, TanStack Query, optimistic UI | 1–2 weeks |
+| 3 — Payments | Stripe, webhooks, email | 1 week |
+| 4 — AI Features | Streaming, tool use, chat widget | 1–2 weeks |
+| 5 — PWA | Service workers, offline, installable | 3–4 days |
+| 6a — Go REST API | chi, sqlx, migrations | 1–2 weeks |
+| 6b — Go Auth + Redis | JWT, caching, background jobs | 1–2 weeks |
+| 7 — DevOps | Docker, CI/CD, monitoring | 1 week |
+
+> Don't wait to finish frontend before starting Go. After Phase 2, you can do Phase 6a in parallel — they are independent.
+
+---
+
+## Stack at Completion
+
+| Layer | Tech |
+|-------|------|
+| Frontend | Next.js 14, TypeScript, Tailwind, Framer Motion, Zustand, TanStack Query |
+| AI | Claude API (streaming, tool use, vision) |
+| Payments | Stripe |
+| Go backend | chi, sqlc, pgx, asynq, go-redis |
+| Database | Neon Postgres (primary), Redis (cache + jobs) |
+| Storage | Cloudflare R2 + CDN |
+| Auth | NextAuth (Google), JWT (Go backend) |
+| DevOps | Docker, GitHub Actions, Vercel (frontend), Fly.io or Railway (Go backend) |
+| Monitoring | Sentry, Vercel Analytics, structured logging |

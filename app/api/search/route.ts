@@ -1,6 +1,8 @@
 // app/api/search/route.ts
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { buildProductQuery } from '@/lib/search/query-builder'
+import { NextRequest, NextResponse } from 'next/server'
+import { cookies, headers } from 'next/headers'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' })
@@ -46,3 +48,15 @@ export async function POST(req: Request) {
     return Response.json({ error: 'Search failed' }, { status: 500 })
   }
 }
+
+
+export const GET = async (req: NextRequest, { params}:{params:Promise<any>}): Promise<any> => {
+
+  const {value} = await params
+  const {searchParams} = req.nextUrl;
+  const body = await req.json();
+  const v= await cookies();
+  const headerss = await headers()
+ return NextResponse.json({})
+}
+

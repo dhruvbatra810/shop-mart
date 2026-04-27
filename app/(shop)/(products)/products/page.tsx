@@ -5,8 +5,8 @@ import { or, ilike } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { getCartBySessionId, getCartByUserId } from "@/lib/cart";
 
-// export const dynamic = "force-dynamic";
-export const revalidate = 5;
+export const dynamic = "force-dynamic";
+// export const revalidate = 5;
 
 export default async function ProductsPage({ searchParams }: { searchParams?: Promise<{ query?: string }> }) {
     let prod = []

@@ -22,6 +22,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
             <Suspense fallback={null} >
                 <NavBarWrapper  cartCount={cartSize}/>
             </Suspense>
-            {children}
+            <div className="pt-16 w-full min-h-screen bg-white dark:bg-zinc-950">{children}</div>
+          
     </>
 }

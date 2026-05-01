@@ -36,7 +36,7 @@ export default function NavBar({ session,cartCount }: { session: any ,cartCount:
 
     const toggleTheme = () => handleTheme(theme === 'light' ? 'dark' : 'light');
     return (
-        <nav className="sticky top-0 z-50 w-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-700 shadow-sm transition-all pb-3 pt-3 sm:py-0">
+        <nav className="fixed top-0 z-50 w-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-700 shadow-sm transition-all pb-3 pt-3 sm:py-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center min-h-[64px] gap-4">
 

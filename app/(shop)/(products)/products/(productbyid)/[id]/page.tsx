@@ -37,11 +37,11 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     }
 
     return (
-        <div className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-white h-full flex-1">
+        <div className="w-full  px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-white dark:bg-zinc-950 h-full flex-1">
             <div className="flex flex-col md:flex-row gap-10 md:gap-16">
 
                 <div className="w-full md:w-1/2">
-                    <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                         <Image
                             src={product.imageUrl}
                             alt={product.name}
@@ -54,23 +54,23 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
                 </div>
 
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
-                    <span className="text-zinc-500 font-medium tracking-wide uppercase text-sm mb-2">
+                    <span className="text-zinc-500 dark:text-zinc-400 font-medium tracking-wide uppercase text-sm mb-2">
                         {product.category}
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">
                         {product.name}
                     </h1>
-                    <p className="text-3xl font-semibold text-zinc-900 mb-6">
+                    <p className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6">
                         ₹{product.price}
                     </p>
 
-                    <div className="prose prose-zinc max-w-none text-zinc-600 mb-8 leading-relaxed">
+                    <div className="prose prose-zinc max-w-none text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed">
                         <p>{product.description}</p>
                     </div>
 
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-zinc-900 w-24">Availability:</span>
+                            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 w-24">Availability:</span>
                             {product.stock > 0 ? (
                                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
                                     In Stock ({product.stock} available)
@@ -84,15 +84,15 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
 
                         {product.occasion && (
                             <div className="flex items-center gap-3">
-                                <span className="text-sm font-medium text-zinc-900 w-24">Occasion:</span>
-                                <span className="text-sm font-medium text-zinc-600 capitalize bg-zinc-100 px-3 py-1 rounded-full">
+                                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 w-24">Occasion:</span>
+                                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 capitalize bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">
                                     {product.occasion}
                                 </span>
                             </div>
                         )}
                     </div>
 
-                    <div className="mt-10 border-t border-zinc-200 pt-8 flex gap-4">
+                    <div className="mt-10 border-t border-zinc-200 dark:border-zinc-700 pt-8 flex gap-4">
                         <AddCartButton product={product} quantity={cartquantity} />
                     </div>
                 </div>

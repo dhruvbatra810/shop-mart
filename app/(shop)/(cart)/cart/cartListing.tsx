@@ -1,13 +1,14 @@
 'use client'
 import { useState, useContext, useTransition } from "react"
 import Image from "next/image"
-import { Cartcontext } from "@/lib/contexts/cartContext"
 import { updateCartQuantity, removeFromCart } from "@/lib/server-action"
 import Link from "next/link"
+import { useCart } from "@/store/cartStore"
 
 export default function CartListing({ initialItems }: { initialItems: any[] }) {
     const [items, setItems] = useState(initialItems)
-    const { setCartCount } = useContext(Cartcontext)
+    const {handleQuantityChange: handleCart} = useCart()
+
     const [isPending, startTransition] = useTransition()
     const [coupon, setCoupon] = useState("")
 
@@ -21,7 +22,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                 ? { ...item, cart: { ...item.cart, quantity: newQuantity } }
                 : item
         ))
-        setCartCount((prev: number) => prev + delta)
+        handleCart(delta)
 
         // Server action
         startTransition(() => {
@@ -31,7 +32,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
 
     const handleRemove = (productId: string, quantityToRemove: number) => {
         setItems(prev => prev.filter(item => item.cart.productId !== productId))
-        setCartCount((prev: number) => prev - quantityToRemove)
+        handleCart(-quantityToRemove)
 
         startTransition(() => {
             removeFromCart(productId)

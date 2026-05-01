@@ -2,9 +2,9 @@
 import { addToCart } from "@/lib/server-action"
 import { Product } from "./productCard"
 import { useContext, useState } from "react"
-import { Cartcontext } from "@/lib/contexts/cartContext"
+import { useCart } from "@/store/cartStore"
 export default function AddCartButton({ product, quantity }: { product: Product, quantity: number }) {
-  const { setCartCount } = useContext(Cartcontext)
+  const {increment,decrement} = useCart()
   const [count, setCount] = useState(quantity)
   return <>
     {count > 0 ? (
@@ -14,7 +14,7 @@ export default function AddCartButton({ product, quantity }: { product: Product,
             formData.set('productId', String(product.id))
             formData.set('quantity', '-1')
             addToCart(formData)
-            setCartCount((prev: number) => prev - 1)
+            decrement()
             setCount(count - 1)
           }} className="flex-1 bg-white rounded-lg py-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors flex items-center justify-center active:scale-[0.98]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
@@ -25,7 +25,7 @@ export default function AddCartButton({ product, quantity }: { product: Product,
         <form action={addToCart} className="flex-1">
           <input type="hidden" name="productId" value={product.id} />
           <input type="hidden" name="quantity" value="1" />
-          <button disabled={product.stock === count} onClick={() => { setCartCount((prev: number) => prev + 1); setCount(count + 1) }} className="w-full bg-white rounded-lg py-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]">
+          <button disabled={product.stock === count} onClick={() => { increment(); setCount(count + 1) }} className="w-full bg-white rounded-lg py-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
@@ -41,7 +41,7 @@ export default function AddCartButton({ product, quantity }: { product: Product,
             formData.set('productId', String(product.id))
             formData.set('quantity', '1')
             addToCart(formData)
-            setCartCount((prev: number) => prev + 1)
+            increment()
             setCount(count + 1)
           }}
         >

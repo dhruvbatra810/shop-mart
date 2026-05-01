@@ -26,6 +26,7 @@ export default function ProductCard({ product, cartMap }: { product: Product, ca
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Link>
+        
         {/* Quantity/Stock badge */}
         {product.stock <= 5 && product.stock > 0 && (
           <div className="absolute top-3 left-3 bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-xs">

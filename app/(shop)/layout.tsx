@@ -1,4 +1,3 @@
-import CartProvider from "@/lib/contexts/cartContext";
 import { db } from "@/db";
 import { carts } from "@/db/schema";
 import NavBarWrapper from "@/components/navbarWrapper";
@@ -20,11 +19,9 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
     }
     return <>
 
-        <CartProvider initialCartSize={cartSize} >
             <Suspense fallback={null} >
-                <NavBarWrapper />
+                <NavBarWrapper  cartCount={cartSize}/>
             </Suspense>
             {children}
-        </CartProvider>
     </>
 }

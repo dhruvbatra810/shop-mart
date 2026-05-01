@@ -33,11 +33,11 @@ export default async function LandingPage() {
             </section>
 
             {/* Featured Collections Section */}
-            <section className="py-24 px-4 bg-white">
+            <section className="py-24 px-4 bg-white dark:bg-zinc-950">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">Summer Essentials</h2>
-                        <p className="text-zinc-500 max-w-2xl mx-auto text-lg">
+                        <h2 className="text-3xl md:text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">Summer Essentials</h2>
+                        <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto text-lg">
                             Upgrade your wardrobe with our latest pieces crafted for maximum comfort and style.
                         </p>
                     </div>

@@ -15,8 +15,8 @@ export type Product = {
 
 export default function ProductCard({ product, cartMap }: { product: Product, cartMap: Map<string, number> }) {
   return (
-    <div className="group flex flex-col bg-white border border-zinc-200 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1">
-      <div className="relative aspect-square w-full bg-zinc-100 overflow-hidden">
+    <div className="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 transform hover:-translate-y-1">
+      <div className="relative aspect-square w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
         <Link href={`/products/${product.id}`}>
           <Image
             src={product.imageUrl}
@@ -26,6 +26,7 @@ export default function ProductCard({ product, cartMap }: { product: Product, ca
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </Link>
+        
         {/* Quantity/Stock badge */}
         {product.stock <= 5 && product.stock > 0 && (
           <div className="absolute top-3 left-3 bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-xs">
@@ -41,11 +42,11 @@ export default function ProductCard({ product, cartMap }: { product: Product, ca
 
       <div className="flex flex-col flex-1 p-5">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-zinc-900 line-clamp-1 flex-1 pr-2">{product.name}</h3>
-          <p className="font-bold text-zinc-900">₹{product.price}</p>
+          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1 flex-1 pr-2">{product.name}</h3>
+          <p className="font-bold text-zinc-900 dark:text-zinc-100">₹{product.price}</p>
         </div>
 
-        <p className="text-sm text-zinc-500 line-clamp-2 mb-4 flex-1">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-4 flex-1">
           {product.description}
         </p>
         <AddCartButton product={product} quantity={cartMap.get(product.id) || 0} />

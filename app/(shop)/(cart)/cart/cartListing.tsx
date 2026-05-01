@@ -1,13 +1,14 @@
 'use client'
 import { useState, useContext, useTransition } from "react"
 import Image from "next/image"
-import { Cartcontext } from "@/lib/contexts/cartContext"
 import { updateCartQuantity, removeFromCart } from "@/lib/server-action"
 import Link from "next/link"
+import { useCart } from "@/store/cartStore"
 
 export default function CartListing({ initialItems }: { initialItems: any[] }) {
     const [items, setItems] = useState(initialItems)
-    const { setCartCount } = useContext(Cartcontext)
+    const {handleQuantityChange: handleCart} = useCart()
+
     const [isPending, startTransition] = useTransition()
     const [coupon, setCoupon] = useState("")
 
@@ -21,7 +22,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                 ? { ...item, cart: { ...item.cart, quantity: newQuantity } }
                 : item
         ))
-        setCartCount((prev: number) => prev + delta)
+        handleCart(delta)
 
         // Server action
         startTransition(() => {
@@ -31,7 +32,7 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
 
     const handleRemove = (productId: string, quantityToRemove: number) => {
         setItems(prev => prev.filter(item => item.cart.productId !== productId))
-        setCartCount((prev: number) => prev - quantityToRemove)
+        handleCart(-quantityToRemove)
 
         startTransition(() => {
             removeFromCart(productId)
@@ -45,13 +46,13 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
     if (items.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-24">
-                <div className="w-24 h-24 bg-zinc-100 rounded-full flex items-center justify-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-zinc-400">
+                <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-zinc-400 dark:text-zinc-500">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                     </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-zinc-900 mb-2">Your cart is empty</h2>
-                <p className="text-zinc-500 mb-8">Looks like you haven't added anything yet.</p>
+                <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Your cart is empty</h2>
+                <p className="text-zinc-500 dark:text-zinc-400 mb-8">Looks like you haven't added anything yet.</p>
                 <Link href="/products" className="bg-zinc-900 text-white px-8 py-3.5 rounded-xl font-medium hover:bg-zinc-800 transition-colors shadow-lg hover:shadow-xl active:scale-[0.98]">
                     Continue Shopping
                 </Link>
@@ -62,35 +63,35 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
     return (
         <div className="flex flex-col lg:flex-row gap-12">
             <div className="lg:w-2/3 flex flex-col gap-6">
-                <h1 className="text-3xl font-bold text-zinc-900 mb-2">Shopping Cart</h1>
+                <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Shopping Cart</h1>
                 {items.map((item) => (
-                    <div key={item.cart.id} className="flex flex-col sm:flex-row gap-6 items-start sm:items-center bg-white p-4 sm:p-5 rounded-2xl border border-zinc-200">
-                        <Link href={`/products/${item.product.id}`} className="relative w-24 h-24 sm:w-28 sm:h-28 bg-zinc-100 rounded-xl overflow-hidden shrink-0 group">
+                    <div key={item.cart.id} className="flex flex-col sm:flex-row gap-6 items-start sm:items-center bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+                        <Link href={`/products/${item.product.id}`} className="relative w-24 h-24 sm:w-28 sm:h-28 bg-zinc-100 dark:bg-zinc-800 rounded-xl overflow-hidden shrink-0 group">
                             <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                         </Link>
                         <div className="flex-1 flex flex-col justify-between h-full">
                             <div>
                                 <Link href={`/products/${item.product.id}`} className="hover:underline decoration-zinc-300 underline-offset-4">
-                                    <h3 className="font-semibold text-lg text-zinc-900 line-clamp-1">{item.product.name}</h3>
+                                    <h3 className="font-semibold text-lg text-zinc-900 dark:text-zinc-100 line-clamp-1">{item.product.name}</h3>
                                 </Link>
-                                <p className="text-zinc-500 text-sm mb-3 mt-1 capitalize">{item.product.category}</p>
+                                <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-3 mt-1 capitalize">{item.product.category}</p>
                             </div>
-                            <p className="font-bold text-zinc-900 text-lg">₹{item.product.price}</p>
+                            <p className="font-bold text-zinc-900 dark:text-zinc-100 text-lg">₹{item.product.price}</p>
                         </div>
                         <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-4 sm:gap-3">
-                            <div className="flex items-center bg-zinc-100 rounded-xl p-1 gap-1">
+                            <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 rounded-xl p-1 gap-1">
                                 <button
                                     onClick={() => handleQuantityChange(item.cart.productId, -1, item.cart.quantity)}
-                                    className="bg-white rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50 active:scale-[0.98]"
+                                    className="bg-white dark:bg-zinc-700 rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-600 transition-colors disabled:opacity-50 active:scale-[0.98]"
                                     disabled={item.cart.quantity <= 1}
                                     aria-label="Decrease quantity"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
                                 </button>
-                                <span className="font-semibold px-4 w-12 text-center text-zinc-900">{item.cart.quantity}</span>
+                                <span className="font-semibold px-4 w-12 text-center text-zinc-900 dark:text-zinc-100">{item.cart.quantity}</span>
                                 <button
                                     onClick={() => handleQuantityChange(item.cart.productId, 1, item.cart.quantity)}
-                                    className="bg-white rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50 active:scale-[0.98]"
+                                    className="bg-white dark:bg-zinc-700 rounded-lg p-2 sm:p-2.5 shadow-sm text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-600 transition-colors disabled:opacity-50 active:scale-[0.98]"
                                     disabled={item.cart.quantity >= item.product.stock}
                                     aria-label="Increase quantity"
                                 >
@@ -106,13 +107,13 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
             </div>
 
             <div className="lg:w-1/3">
-                <div className="bg-zinc-50 p-6 sm:p-8 rounded-3xl border border-zinc-200 sticky top-24">
-                    <h2 className="text-xl font-bold text-zinc-900 mb-6">Order Summary</h2>
+                <div className="bg-zinc-50 dark:bg-zinc-900 p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-700 sticky top-24">
+                    <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Order Summary</h2>
 
                     <div className="flex flex-col gap-4 mb-6">
-                        <div className="flex justify-between items-center text-zinc-600">
+                        <div className="flex justify-between items-center text-zinc-600 dark:text-zinc-400">
                             <span>Subtotal</span>
-                            <span className="font-medium text-zinc-900 text-right">₹{subtotal.toFixed(2)}</span>
+                            <span className="font-medium text-zinc-900 dark:text-zinc-100 text-right">₹{subtotal.toFixed(2)}</span>
                         </div>
                         {discount > 0 && (
                             <div className="flex justify-between items-center text-emerald-600 font-medium">
@@ -120,25 +121,25 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                                 <span className="text-right">-₹{discount.toFixed(2)}</span>
                             </div>
                         )}
-                        <div className="flex justify-between items-start gap-4 text-zinc-600 pb-5 border-b border-zinc-200">
+                        <div className="flex justify-between items-start gap-4 text-zinc-600 dark:text-zinc-400 pb-5 border-b border-zinc-200 dark:border-zinc-700">
                             <span className="shrink-0">Shipping</span>
-                            <span className="text-zinc-900 text-right">Calculated at checkout</span>
+                            <span className="text-zinc-900 dark:text-zinc-100 text-right">Calculated at checkout</span>
                         </div>
                         <div className="flex justify-between items-center pt-2 gap-4">
-                            <span className="font-bold text-xl text-zinc-900 shrink-0">Total</span>
-                            <span className="font-bold text-3xl text-zinc-900 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis text-right max-w-[200px]">₹{total.toFixed(2)}</span>
+                            <span className="font-bold text-xl text-zinc-900 dark:text-zinc-100 shrink-0">Total</span>
+                            <span className="font-bold text-3xl text-zinc-900 dark:text-zinc-100 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis text-right max-w-[200px]">₹{total.toFixed(2)}</span>
                         </div>
                     </div>
 
                     <div className="mb-8">
-                        <label className="text-sm font-medium text-zinc-700 block mb-2 px-1">Coupon Code</label>
+                        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 block mb-2 px-1">Coupon Code</label>
                         <div className="flex gap-2">
                             <input
                                 type="text"
                                 value={coupon}
                                 onChange={e => setCoupon(e.target.value.toUpperCase())}
                                 placeholder="e.g. DISCOUNT10"
-                                className="flex-1 bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow uppercase font-medium placeholder:text-zinc-400 placeholder:font-normal placeholder:normal-case"
+                                className="flex-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-400 transition-shadow uppercase font-medium placeholder:text-zinc-400 dark:placeholder:text-zinc-500 placeholder:font-normal placeholder:normal-case"
                             />
                         </div>
                     </div>

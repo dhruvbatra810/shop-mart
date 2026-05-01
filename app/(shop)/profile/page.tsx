@@ -11,11 +11,11 @@ export default async function Profile() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-zinc-200 overflow-hidden">
+            <div className="max-w-2xl mx-auto bg-white dark:bg-zinc-900 rounded-3xl shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-hidden">
                 <div className="p-8 sm:p-12 text-center">
                     {/* User Avatar */}
                     {session.user.image ? (
-                        <div className="relative w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-4 border-zinc-100 shadow-sm">
+                        <div className="relative w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-4 border-zinc-100 dark:border-zinc-700 shadow-sm">
                             <Image
                                 src={session.user.image}
                                 alt={session.user.name || 'User Profile'}
@@ -24,18 +24,18 @@ export default async function Profile() {
                             />
                         </div>
                     ) : (
-                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-zinc-100 flex items-center justify-center border-4 border-white shadow-sm">
-                            <span className="text-3xl font-semibold text-zinc-400">
+                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center border-4 border-white dark:border-zinc-700 shadow-sm">
+                            <span className="text-3xl font-semibold text-zinc-400 dark:text-zinc-500">
                                 {session.user.name?.charAt(0).toUpperCase() || session.user.email?.charAt(0).toUpperCase()}
                             </span>
                         </div>
                     )}
 
                     {/* User Info */}
-                    <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-2">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
                         {session.user.name}
                     </h1>
-                    <p className="text-zinc-500 mb-10 text-lg">
+                    <p className="text-zinc-500 dark:text-zinc-400 mb-10 text-lg">
                         {session.user.email}
                     </p>
 

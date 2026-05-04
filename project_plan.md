@@ -845,3 +845,14 @@ A small websocket connection (`/ws/activity`) streams anonymized real-time event
 | Auth | NextAuth (Google), JWT (Go backend) |
 | DevOps | Docker, GitHub Actions, Vercel (frontend), Fly.io or Railway (Go backend) |
 | Monitoring | Sentry, Vercel Analytics, structured logging |
+
+
+<!--
+cart functionality
+google login 
+google analytics 
+gemini sdk api search thingi
+stripe integration 
+dark mode 
+
+--!>

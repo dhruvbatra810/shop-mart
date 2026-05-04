@@ -1,6 +1,7 @@
 import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 
 export default async function Profile() {
     const session = await auth()
@@ -39,6 +40,17 @@ export default async function Profile() {
                         {session.user.email}
                     </p>
 
+                    {/* Orders Button */}
+                    <Link
+                        href="/orders"
+                        className="mb-3 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 px-8 py-3.5 rounded-xl font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2 mx-auto w-full sm:w-auto min-w-50"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        My Orders
+                    </Link>
+
                     {/* Sign Out Button */}
                     <form action={async () => {
                         'use server';
@@ -46,7 +58,7 @@ export default async function Profile() {
                     }}>
                         <button
                             type="submit"
-                            className="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3.5 rounded-xl font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2 mx-auto w-full sm:w-auto min-w-[200px]"
+                            className="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3.5 rounded-xl font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2 mx-auto w-full sm:w-auto min-w-50"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />

@@ -1,13 +1,15 @@
 'use client'
-import { useState, useContext, useTransition } from "react"
+import { useState, useTransition } from "react"
 import Image from "next/image"
-import { updateCartQuantity, removeFromCart } from "@/lib/server-action"
+import { updateCartQuantity, removeFromCart, checkoutRedirection } from "@/lib/server-action"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCart } from "@/store/cartStore"
 
 export default function CartListing({ initialItems }: { initialItems: any[] }) {
     const [items, setItems] = useState(initialItems)
     const {handleQuantityChange: handleCart} = useCart()
+    const router = useRouter()
 
     const [isPending, startTransition] = useTransition()
     const [coupon, setCoupon] = useState("")
@@ -143,13 +145,16 @@ export default function CartListing({ initialItems }: { initialItems: any[] }) {
                             />
                         </div>
                     </div>
-
-                    <button className="relative w-full bg-zinc-900 text-white rounded-2xl py-4 font-semibold text-lg hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] mb-6 flex items-center justify-center overflow-hidden">
+                    <form action={checkoutRedirection}>
+                        <input type="hidden" value={total} name="total"/>
+                         <button className="relative w-full bg-zinc-900 text-white rounded-2xl py-4 font-semibold text-lg hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] mb-6 flex items-center justify-center overflow-hidden">
                         Proceed to Checkout
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="absolute right-6 w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                         </svg>
                     </button>
+                    </form>
+                   
 
                     <p className="text-xs text-zinc-500 font-medium text-center flex items-center justify-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>

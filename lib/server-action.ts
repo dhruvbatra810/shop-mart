@@ -1,10 +1,11 @@
 'use server'
 
 import { db } from "@/db";
-import { carts } from "@/db/schema";
+import { carts, orders } from "@/db/schema";
 import { sql, and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation";
 
 export async function addToCart(formData: FormData) {
     const cookieStore = await cookies();
@@ -75,3 +76,40 @@ export async function removeFromCart(productId: string) {
     revalidatePath('/cart');
 }
 
+export async function checkoutRedirection(form: FormData) {
+    const total = Number(form.get('total'))
+    const cookieStore = await cookies();
+    const userId = cookieStore.get('user_id')?.value;
+
+    if (!userId) redirect('/login')
+
+    const cartItems = await db
+        .select({ productId: carts.productId, quantity: carts.quantity })
+        .from(carts)
+        .where(eq(carts.userId, userId))
+
+    if (cartItems.length === 0) redirect('/cart')
+
+    const existing = await db
+        .select({ id: orders.id })
+        .from(orders)
+        .where(and(eq(orders.userId, userId), eq(orders.status, 'pending')))
+        .limit(1)
+
+    if (existing.length > 0) {
+        redirect(`/checkout?amount=${Math.round(total * 100)}&orderId=${existing[0].id}`)
+    }
+
+    const orderId = crypto.randomUUID()
+    await db.insert(orders).values({
+        id: orderId,
+        userId,
+        items: JSON.stringify(cartItems),
+        total: total.toFixed(2),
+        status: 'pending',
+    })
+
+    await db.delete(carts).where(eq(carts.userId, userId))
+
+    redirect(`/checkout?amount=${Math.round(total * 100)}&orderId=${orderId}`)
+}

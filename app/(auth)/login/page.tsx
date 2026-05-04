@@ -32,6 +32,7 @@ export default function Login() {
                             type="email"
                             placeholder="name@example.com"
                             required
+                            disabled
                         />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -43,11 +44,13 @@ export default function Login() {
                             type="password"
                             placeholder="••••••••"
                             required
+                            disabled
                         />
                     </div>
                     <button
                         className="mt-2 bg-zinc-900 hover:bg-zinc-800 text-white border-none rounded-xl px-4 py-3.5 font-medium transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
                         type="submit"
+                        disabled
                     >
                         Sign In
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">

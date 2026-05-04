@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -13,10 +9,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-}
 
 body {
   color: var(--foreground);

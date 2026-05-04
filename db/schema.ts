@@ -28,7 +28,8 @@ export const orders = pgTable('orders', {
   userId: text('user_id').notNull().references(() => users.id),
   items: text('items').notNull(),   // JSON stringified array
   total: decimal('total', { precision: 10, scale: 2 }).notNull(),
-  status: text('status').notNull().default('placed'),  // placed, shipped, delivered
+  status: text('status').notNull().default('pending'),  // pending, placed, shipped, delivered, payment_failed
+  paymentIntentId: text('payment_intent_id').unique(),
   createdAt: timestamp('created_at').defaultNow(),
 })
 

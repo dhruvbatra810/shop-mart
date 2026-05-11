@@ -1,4 +1,5 @@
 import AddCartButton from "@/components/addCartButton";
+import RecommendationsSection from "@/components/RecommendationsSection";
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import { getCartBySessionId, getCartByUserId } from "@/lib/cart";
@@ -37,6 +38,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     }
 
     return (
+        <>
         <div className="w-full  px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-white dark:bg-zinc-950 h-full flex-1">
             <div className="flex flex-col md:flex-row gap-10 md:gap-16">
 
@@ -98,5 +100,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
                 </div>
             </div>
         </div>
+        <RecommendationsSection currentProductId={id} />
+        </>
     );
 }

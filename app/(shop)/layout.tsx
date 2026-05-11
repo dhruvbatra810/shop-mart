@@ -4,6 +4,7 @@ import NavBarWrapper from "@/components/navbarWrapper";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
@@ -23,6 +24,6 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
                 <NavBarWrapper  cartCount={cartSize}/>
             </Suspense>
             <div className="pt-16 w-full min-h-screen bg-white dark:bg-zinc-950">{children}</div>
-          
+            <ChatWidget />
     </>
 }

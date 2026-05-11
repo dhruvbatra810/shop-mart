@@ -12,7 +12,9 @@ import {
 } from '@/lib/ai/tools'
 import { SearchFilters } from '@/lib/types'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const apiKey = process.env.GEMINI_API_KEY
+if (!apiKey) throw new Error('GEMINI_API_KEY is required')
+const genAI = new GoogleGenerativeAI(apiKey)
 
 const SYSTEM_INSTRUCTION = `You are a helpful shopping assistant for an Indian ecommerce store selling clothing, electronics, and gifts.
 
@@ -91,17 +93,20 @@ export async function POST(request: NextRequest) {
                 break
               }
               case 'getProductDetails': {
-                toolResult = await getProductDetails(args.productId as string)
+                if (typeof args.productId !== 'string' || !args.productId) {
+                  toolResult = { error: 'productId is required' }
+                  break
+                }
+                toolResult = await getProductDetails(args.productId)
                 break
               }
               case 'addToCart': {
-                const qty = (args.quantity as number) ?? 1
-                toolResult = await addToCartTool(
-                  args.productId as string,
-                  qty,
-                  userId,
-                  sessionId
-                )
+                if (typeof args.productId !== 'string' || !args.productId) {
+                  toolResult = { error: 'productId is required' }
+                  break
+                }
+                const qty = typeof args.quantity === 'number' && args.quantity > 0 ? args.quantity : 1
+                toolResult = await addToCartTool(args.productId, qty, userId, sessionId)
                 const res = toolResult as { success: boolean }
                 if (res.success) send(`data: __CART_UPDATED__\n\n`)
                 break
@@ -149,8 +154,21 @@ export async function POST(request: NextRequest) {
         send('data: [DONE]\n\n')
         controller.close()
       } catch (err) {
-        console.error('Chat API error:', err)
-        send('data: __ERROR__Something went wrong\n\n')
+        const name = err instanceof Error ? err.name : 'UnknownError'
+        const code = (err as Record<string, unknown>).code as string | undefined
+        const status = (err as Record<string, unknown>).status as number | undefined
+
+        let userMessage = 'Something went wrong'
+        if (status === 429 || code === 'RESOURCE_EXHAUSTED') {
+          userMessage = 'Rate limit reached, please retry later'
+        } else if (status === 400) {
+          userMessage = 'Invalid request'
+        } else if (code === 'ENOTFOUND' || code === 'ECONNREFUSED') {
+          userMessage = 'Service unavailable, please try again'
+        }
+
+        console.error('Chat API error:', { name, code, status })
+        send(`data: __ERROR__${userMessage}\n\n`)
         send('data: [DONE]\n\n')
         controller.close()
       }

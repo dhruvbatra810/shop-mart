@@ -15,12 +15,21 @@ export default async function ProductsPage({ searchParams }: { searchParams?: Pr
     if (!param?.query) {
         prod = await db.select().from(products);
     } else {
-        const res = await fetch(`${process.env.SHOP_MART_BASE_API}/api/search`, {
-            method: 'POST',
-            body: JSON.stringify({ query: param?.query })
-        })
-        const data = await res.json();
-        prod = data.products;
+        try {
+            const res = await fetch(`${process.env.SHOP_MART_BASE_API}/api/search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: param?.query })
+            })
+            if (!res.ok) {
+                console.error(`Search API returned ${res.status}`)
+            } else {
+                const data = await res.json()
+                prod = Array.isArray(data.products) ? data.products : []
+            }
+        } catch (err) {
+            console.error('Search fetch failed:', err instanceof Error ? err.message : err)
+        }
     }
     const cartMap = new Map();
     if (cookieStore.get('user_id')?.value) {

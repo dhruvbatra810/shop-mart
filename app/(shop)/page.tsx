@@ -10,7 +10,7 @@ export default async function LandingPage() {
             {/* Hero Section */}
             <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center bg-zinc-900 overflow-hidden">
                 {/* Background Image & Overlay */}
-                <Image src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop" width={2070} height={1380} alt="Hero Image" className="absolute inset-0 bg-cover bg-center" priority />
+                <Image src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop" fill sizes="100vw" alt="Hero Image" className="object-cover object-center" priority />
                 <div className="absolute inset-0 bg-linear-to-b from-black/40 to-black/80 z-10" />
 
                 <div className="relative z-20 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">

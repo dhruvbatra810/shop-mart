@@ -67,14 +67,19 @@ export async function POST(request: NextRequest) {
 
         // Tool call loop — Gemini may call multiple tools across turns
         for (let loop = 0; loop < MAX_TOOL_LOOPS; loop++) {
-          const result = await model.generateContent({ contents })
-          const response = result.response
+          const result = await model.generateContentStream({ contents })
+
+          // Stream text chunks to the client as they arrive
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text()
+            if (chunkText) send(`data: ${JSON.stringify(chunkText)}\n\n`)
+          }
+
+          const response = await result.response
           const functionCalls = response.functionCalls()
 
-          // No tool calls → final text response, stream it and stop
+          // No tool calls → text was already streamed above, stop
           if (!functionCalls || functionCalls.length === 0) {
-            const text = response.text()
-            send(`data: ${JSON.stringify(text)}\n\n`)
             break
           }
 
